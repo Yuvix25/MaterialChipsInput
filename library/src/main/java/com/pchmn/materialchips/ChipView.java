@@ -7,23 +7,19 @@ import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.support.annotation.ColorInt;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.ColorInt;
+import androidx.core.content.ContextCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.pchmn.materialchips.model.Chip;
 import com.pchmn.materialchips.model.ChipInterface;
 import com.pchmn.materialchips.util.LetterTileProvider;
 import com.pchmn.materialchips.util.ViewUtil;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChipView extends RelativeLayout {
@@ -32,10 +28,10 @@ public class ChipView extends RelativeLayout {
     // context
     private Context mContext;
     // xml elements
-    @BindView(R2.id.content) LinearLayout mContentLayout;
-    @BindView(R2.id.icon) CircleImageView mAvatarIconImageView;
-    @BindView(R2.id.label) TextView mLabelTextView;
-    @BindView(R2.id.delete_button) ImageButton mDeleteButton;
+    LinearLayout mContentLayout;
+    CircleImageView mAvatarIconImageView;
+    TextView mLabelTextView;
+    ImageButton mDeleteButton;
     // attributes
     private static final int NONE = -1;
     private String mLabel;
@@ -72,8 +68,11 @@ public class ChipView extends RelativeLayout {
     private void init(AttributeSet attrs) {
         // inflate layout
         View rootView = inflate(getContext(), R.layout.chip_view, this);
-        // butter knife
-        ButterKnife.bind(this, rootView);
+        mContentLayout = rootView.findViewById(R.id.content);
+        mAvatarIconImageView = rootView.findViewById(R.id.icon);
+        mLabelTextView = rootView.findViewById(R.id.label);
+        mDeleteButton = rootView.findViewById(R.id.delete_button);
+
         // letter tile provider
         mLetterTileProvider = new LetterTileProvider(mContext);
 

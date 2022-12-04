@@ -1,14 +1,15 @@
 package com.pchmn.materialchips.views;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.os.Build;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -18,22 +19,22 @@ import android.widget.RelativeLayout;
 
 import com.pchmn.materialchips.ChipsInput;
 import com.pchmn.materialchips.R;
-import com.pchmn.materialchips.R2;
 import com.pchmn.materialchips.adapter.FilterableAdapter;
 import com.pchmn.materialchips.model.ChipInterface;
 import com.pchmn.materialchips.util.ViewUtil;
 
-import java.util.List;
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import java.util.Comparator;
+import java.util.List;
 
 public class FilterableListView extends RelativeLayout {
 
     private static final String TAG = FilterableListView.class.toString();
     private Context mContext;
     // list
-    @BindView(R2.id.recycler_view) RecyclerView mRecyclerView;
+    RecyclerView mRecyclerView;
     private FilterableAdapter mAdapter;
     private List<? extends ChipInterface> mFilterableList;
     // others
@@ -48,22 +49,23 @@ public class FilterableListView extends RelativeLayout {
     private void init() {
         // inflate layout
         View view = inflate(getContext(), R.layout.list_filterable_view, this);
-        // butter knife
-        ButterKnife.bind(this, view);
+        mRecyclerView = view.findViewById(R.id.recycler_view);
 
         // recycler
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
 
         // hide on first
         setVisibility(GONE);
+
+        keyboardListeners();
     }
 
-    public void build(List<? extends ChipInterface> filterableList, ChipsInput chipsInput, ColorStateList backgroundColor, ColorStateList textColor) {
+    public void build(List<? extends ChipInterface> filterableList, ChipsInput chipsInput, ColorStateList backgroundColor, ColorStateList textColor, Comparator<ChipInterface> comparator) {
         mFilterableList = filterableList;
         mChipsInput = chipsInput;
 
         // adapter
-        mAdapter = new FilterableAdapter(mContext, mRecyclerView, filterableList, chipsInput, backgroundColor, textColor);
+        mAdapter = new FilterableAdapter(mContext, mRecyclerView, filterableList, chipsInput, backgroundColor, textColor, comparator);
         mRecyclerView.setAdapter(mAdapter);
         if(backgroundColor != null)
             mRecyclerView.getBackground().setColorFilter(backgroundColor.getDefaultColor(), PorterDuff.Mode.SRC_ATOP);
@@ -115,6 +117,28 @@ public class FilterableListView extends RelativeLayout {
                     fadeOut();
             }
         });
+    }
+
+    private void keyboardListeners() {
+        KeyboardVisibilityEvent.setEventListener(
+                (Activity) (getContext()),
+                new KeyboardVisibilityEventListener() {
+                    @Override
+                    public void onVisibilityChanged(boolean isOpen) {
+                        ViewGroup.MarginLayoutParams layoutParams = (MarginLayoutParams) getLayoutParams();
+                        if (layoutParams == null)
+                            return;
+
+                        final View rootView = getRootView();
+                        Rect r = new Rect();
+                        rootView.getWindowVisibleDisplayFrame(r);
+
+                        // visible height
+                        layoutParams.bottomMargin = rootView.getHeight() - r.bottom;
+
+                        setLayoutParams(layoutParams);
+                    }
+                });
     }
 
     /**

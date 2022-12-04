@@ -4,29 +4,26 @@ package com.pchmn.materialchips.adapter;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.PorterDuff;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.pchmn.materialchips.ChipsInput;
 import com.pchmn.materialchips.R;
 import com.pchmn.materialchips.model.ChipInterface;
 import com.pchmn.materialchips.util.ColorUtil;
 import com.pchmn.materialchips.util.LetterTileProvider;
-import com.pchmn.materialchips.util.ViewUtil;
 
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -60,17 +57,22 @@ public class FilterableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                              List<? extends ChipInterface> chipList,
                              ChipsInput chipsInput,
                              ColorStateList backgroundColor,
-                             ColorStateList textColor) {
+                             ColorStateList textColor,
+                             Comparator<ChipInterface> comparator) {
         mContext = context;
         mRecyclerView = recyclerView;
         mCollator = Collator.getInstance(Locale.getDefault());
         mCollator.setStrength(Collator.PRIMARY);
-        mComparator = new Comparator<ChipInterface>() {
-            @Override
-            public int compare(ChipInterface o1, ChipInterface o2) {
-                return mCollator.compare(o1.getLabel(), o2.getLabel());
-            }
-        };
+        if (comparator == null) {
+            mComparator = new Comparator<ChipInterface>() {
+                @Override
+                public int compare(ChipInterface o1, ChipInterface o2) {
+                    return mCollator.compare(o1.getLabel(), o2.getLabel());
+                }
+            };
+        } else {
+            mComparator = comparator;
+        }
         // remove chips that do not have label
         Iterator<? extends ChipInterface> iterator = chipList.iterator();
         while(iterator.hasNext()) {
@@ -102,6 +104,15 @@ public class FilterableAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 mRecyclerView.scrollToPosition(0);
             }
         });
+    }
+
+    public FilterableAdapter(Context context,
+                             RecyclerView recyclerView,
+                             List<? extends ChipInterface> chipList,
+                             ChipsInput chipsInput,
+                             ColorStateList backgroundColor,
+                             ColorStateList textColor) {
+        this(context, recyclerView, chipList, chipsInput, backgroundColor, textColor, null);
     }
 
     private class ItemViewHolder extends RecyclerView.ViewHolder {

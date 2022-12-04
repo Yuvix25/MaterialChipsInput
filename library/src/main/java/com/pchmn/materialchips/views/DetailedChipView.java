@@ -1,16 +1,13 @@
 package com.pchmn.materialchips.views;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
@@ -19,16 +16,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.pchmn.materialchips.R;
-import com.pchmn.materialchips.R2;
-import com.pchmn.materialchips.model.Chip;
 import com.pchmn.materialchips.model.ChipInterface;
 import com.pchmn.materialchips.util.ColorUtil;
 import com.pchmn.materialchips.util.LetterTileProvider;
-import com.pchmn.materialchips.util.MyWindowCallback;
-import com.pchmn.materialchips.util.ViewUtil;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
@@ -38,11 +29,11 @@ public class DetailedChipView extends RelativeLayout {
     // context
     private Context mContext;
     // xml elements
-    @BindView(R2.id.content) RelativeLayout mContentLayout;
-    @BindView(R2.id.avatar_icon) CircleImageView mAvatarIconImageView;
-    @BindView(R2.id.name) TextView mNameTextView;
-    @BindView(R2.id.info) TextView mInfoTextView;
-    @BindView(R2.id.delete_button) ImageButton mDeleteButton;
+    RelativeLayout mContentLayout;
+    CircleImageView mAvatarIconImageView;
+    TextView mNameTextView;
+    TextView mInfoTextView;
+    ImageButton mDeleteButton;
     // letter tile provider
     private static LetterTileProvider mLetterTileProvider;
     // attributes
@@ -68,8 +59,12 @@ public class DetailedChipView extends RelativeLayout {
     private void init(AttributeSet attrs) {
         // inflate layout
         View rootView = inflate(getContext(), R.layout.detailed_chip_view, this);
-        // butter knife
-        ButterKnife.bind(this, rootView);
+        mContentLayout = rootView.findViewById(R.id.content);
+        mAvatarIconImageView = rootView.findViewById(R.id.avatar_icon);
+        mNameTextView = rootView.findViewById(R.id.name);
+        mInfoTextView = rootView.findViewById(R.id.info);
+        mDeleteButton = rootView.findViewById(R.id.delete_button);
+
         // letter tile provider
         mLetterTileProvider = new LetterTileProvider(mContext);
 

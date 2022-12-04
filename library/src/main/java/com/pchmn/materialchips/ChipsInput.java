@@ -7,11 +7,10 @@ import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.RecyclerView;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.EditText;
 
 import com.beloo.widget.chipslayoutmanager.ChipsLayoutManager;
 import com.pchmn.materialchips.adapter.ChipsAdapter;
@@ -26,10 +25,9 @@ import com.pchmn.materialchips.views.FilterableListView;
 import com.pchmn.materialchips.views.ScrollViewMaxHeight;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class ChipsInput extends ScrollViewMaxHeight {
 
@@ -37,7 +35,7 @@ public class ChipsInput extends ScrollViewMaxHeight {
     // context
     private Context mContext;
     // xml element
-    @BindView(R2.id.chips_recycler) RecyclerView mRecyclerView;
+    RecyclerView mRecyclerView;
     // adapter
     private ChipsAdapter mChipsAdapter;
     // attributes
@@ -88,7 +86,7 @@ public class ChipsInput extends ScrollViewMaxHeight {
         // inflate layout
         View rootView = inflate(getContext(), R.layout.chips_input, this);
         // butter knife
-        ButterKnife.bind(this, rootView);
+        mRecyclerView = rootView.findViewById(R.id.chips_recycler);
 
         // attributes
         if(attrs != null) {
@@ -336,11 +334,15 @@ public class ChipsInput extends ScrollViewMaxHeight {
         this.mChipDetailedBackgroundColor = mChipDetailedBackgroundColor;
     }
 
-    public void setFilterableList(List<? extends ChipInterface> list) {
+    public void setFilterableList(List<? extends ChipInterface> list, Comparator<ChipInterface> filterableListComparator) {
         mChipList = list;
         mFilterableListView = new FilterableListView(mContext);
-        mFilterableListView.build(mChipList, this, mFilterableListBackgroundColor, mFilterableListTextColor);
+        mFilterableListView.build(mChipList, this, mFilterableListBackgroundColor, mFilterableListTextColor, filterableListComparator);
         mChipsAdapter.setFilterableListView(mFilterableListView);
+    }
+
+    public void setFilterableList(List<? extends ChipInterface> list) {
+        setFilterableList(list, null);
     }
 
     public List<? extends ChipInterface> getFilterableList() {

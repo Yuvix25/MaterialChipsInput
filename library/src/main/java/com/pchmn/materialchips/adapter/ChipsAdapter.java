@@ -2,11 +2,10 @@ package com.pchmn.materialchips.adapter;
 
 import android.content.Context;
 import android.os.Build;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,6 @@ import com.pchmn.materialchips.ChipsInput;
 import com.pchmn.materialchips.model.ChipInterface;
 import com.pchmn.materialchips.views.ChipsInputEditText;
 import com.pchmn.materialchips.views.DetailedChipView;
-import com.pchmn.materialchips.model.Chip;
 import com.pchmn.materialchips.util.ViewUtil;
 import com.pchmn.materialchips.views.FilterableListView;
 
@@ -166,6 +164,7 @@ public class ChipsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         });
     }
 
+    private static boolean firstAutofit = true;
     private void autofitEditText() {
         // min width of edit text = 50 dp
         ViewGroup.LayoutParams params = mEditText.getLayoutParams();
@@ -187,7 +186,10 @@ public class ChipsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 mEditText.setLayoutParams(params);
 
                 // request focus
-                mEditText.requestFocus();
+                if (!firstAutofit)
+                    mEditText.requestFocus();
+                else
+                    firstAutofit = false;
 
                 // remove the listener:
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
